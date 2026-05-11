@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Book Collection | Book Store</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .navbar-brand i {
+            margin-right: 10px;
+            color: #ffd700;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .nav-buttons .btn {
+            margin-left: 12px;
+            border-radius: 25px;
+            padding: 8px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-buttons .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-buttons .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-light {
+            background: white;
+            color: #2c3e50;
+            border: none;
+        }
+
+        .btn-light:hover {
+            background: #f8f9fa;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            border: none;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        /* Header Section */
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '📚';
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            font-size: 80px;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+
+        .page-header h2 {
+            color: #2c3e50;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        /* Action Buttons */
+        .action-bar {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+            color: white;
+        }
+
+        .btn-add i {
+            margin-right: 8px;
+        }
+
+        .btn-cart-action {
+            background: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(241, 196, 15, 0.3);
+        }
+
+        .btn-cart-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(241, 196, 15, 0.5);
+            color: white;
+        }
+
+        .btn-cart-action i {
+            margin-right: 8px;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 5px 0 0;
+        }
+
+        /* Table Styling */
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .table {
+            margin: 0;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            padding: 15px;
+            border: none;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            transform: scale(1.01);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+            border-color: #eee;
+        }
+
+        /* Book ID Badge */
+        .book-id {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Price Styling */
+        .book-price {
+            font-weight: 700;
+            color: #27ae60;
+            font-size: 1.2rem;
+        }
+
+        .book-price::before {
+            content: '$';
+            margin-right: 2px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-action i {
+            font-size: 1rem;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.5);
+            color: white;
+        }
+
+        .btn-cart {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            box-shadow: 0 3px 10px rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-cart:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            color: #cbd5e0;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        .empty-state .btn {
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.4rem;
+            }
+
+            .nav-buttons .btn {
+                padding: 6px 15px;
+                font-size: 0.9rem;
+            }
+
+            .page-header h2 {
+                font-size: 2rem;
+            }
+
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Tooltip */
+        [data-tooltip] {
+            position: relative;
+            cursor: pointer;
+        }
+
+        [data-tooltip]:before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 5px 10px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        [data-tooltip]:hover:before {
+            opacity: 1;
+            visibility: visible;
+            bottom: 120%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-dark navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/books">
+                <i class="fas fa-book-open"></i>
+                Book Store
+            </a>
+            <div class="nav-buttons">
+                <a href="/books" class="btn btn-light">
+                    <i class="fas fa-book"></i> Books
+                </a>
+                <a href="/cart" class="btn btn-success">
+                    <i class="fas fa-shopping-cart"></i> Cart
+                    <!-- Cart count badge (if available) -->
+                    <span class="badge bg-warning text-dark ms-1" th:if="${cartCount}" th:text="${cartCount}">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2><i class="fas fa-book-open me-3"></i>Book Collection</h2>
+            <p>Browse through our amazing collection of books</p>
+        </div>
+
+        <!-- Stats Cards (Optional - populate with actual data if available) -->
+        <div class="stats-container" th:if="${books != null}">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-books"></i>
+                </div>
+                <div class="stat-label">Total Books</div>
+                <div class="stat-value" th:text="${#lists.size(books)}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-label">Authors</div>
+                <div class="stat-value" th:text="${uniqueAuthors}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-label">Total Value</div>
+                <div class="stat-value" th:text="${totalValue}">$0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-label">In Cart</div>
+                <div class="stat-value" th:text="${cartCount}">0</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-bar">
+            <a href="/add-book" class="btn-add">
+                <i class="fas fa-plus-circle"></i> Add New Book
+            </a>
+            <a href="/cart" class="btn-cart-action">
+                <i class="fas fa-shopping-cart"></i> View Cart
+            </a>
+        </div>
+
+        <!-- Books Table -->
+        <div class="table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Book Name</th>
+                        <th>Author</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through books -->
+                    <tr th:each="b : ${books}" th:class="${b.quantity <= 0 ? 'table-danger' : ''}">
+                        <td>
+                            <span class="book-id" th:text="${b.id}">1</span>
+                        </td>
+                        <td>
+                            <strong th:text="${b.name}">Book Name</strong>
+                            <!-- Stock status badge -->
+                            <span class="badge bg-danger ms-2" th:if="${b.quantity <= 0}">Out of Stock</span>
+                            <span class="badge bg-success ms-2" th:if="${b.quantity > 10}">In Stock</span>
+                        </td>
+                        <td>
+                            <i class="fas fa-user text-muted me-2"></i>
+                            <span th:text="${b.author}">Author Name</span>
+                        </td>
+                        <td>
+                            <span class="book-price" th:text="${b.price}">29.99</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary" th:text="${b.quantity}">10</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <!-- Delete Button -->
+                                <a th:href="@{/delete/{id}(id=${b.id})}" class="btn-action btn-delete"
+                                    onclick="return confirm('⚠️ Are you sure you want to delete this book? This action cannot be undone.');"
+                                    data-tooltip="Delete Book">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span class="d-none d-md-inline">Delete</span>
+                                </a>
+
+                                <!-- Add to Cart Button -->
+                                <a th:href="@{/cart/{id}(id=${b.id})}" class="btn-action btn-cart"
+                                    th:classappend="${b.quantity <= 0 ? 'disabled' : ''}"
+                                    th:disabled="${b.quantity <= 0}" data-tooltip="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i>
+                                    <span class="d-none d-md-inline">Add to Cart</span>
+                                </a>
+
+                                <!-- View Details Button (Optional) -->
+                                <a href="#" class="btn-action btn-info"
+                                    style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);"
+                                    data-bs-toggle="modal" th:data-bs-target="'#bookModal' + ${b.id}">
+                                    <i class="fas fa-eye"></i>
+                                    <span class="d-none d-md-inline">View</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr th:if="${books == null or #lists.isEmpty(books)}">
+                        <td colspan="6" class="text-center p-5">
+                            <div class="empty-state">
+                                <i class="fas fa-book-open"></i>
+                                <h3>No Books Found</h3>
+                                <p>Start by adding your first book to the collection!</p>
+                                <a href="/add-book" class="btn-add">
+                                    <i class="fas fa-plus-circle"></i> Add Your First Book
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modals for Book Details (Optional) -->
+        <div th:each="b : ${books}">
+            <div class="modal fade" th:id="'bookModal' + ${b.id}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header"
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <h5 class="modal-title">
+                                <i class="fas fa-book me-2"></i>
+                                <span th:text="${b.name}">Book Details</span>
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" title="Close modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-book-open" style="font-size: 4rem; color: #667eea;"></i>
+                            </div>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Book ID:</th>
+                                    <td th:text="${b.id}">1</td>
+                                </tr>
+                                <tr>
+                                    <th>Name:</th>
+                                    <td th:text="${b.name}">Book Name</td>
+                                </tr>
+                                <tr>
+                                    <th>Author:</th>
+                                    <td th:text="${b.author}">Author Name</td>
+                                </tr>
+                                <tr>
+                                    <th>Price:</th>
+                                    <td th:text="'$' + ${b.price}">$29.99</td>
+                                </tr>
+                                <tr>
+                                    <th>Quantity:</th>
+                                    <td>
+                                        <span class="badge bg-secondary" th:text="${b.quantity}">10</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <a th:href="@{/cart/{id}(id=${b.id})}" class="btn btn-success">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom Scripts -->
+    <script>
+        // Confirm delete with custom message
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function (e) {
+                if (!confirm('⚠️ Are you sure you want to delete this book? This action cannot be undone.')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Disable cart buttons for out of stock books
+        document.querySelectorAll('.btn-cart.disabled').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                alert('This book is currently out of stock!');
+            });
+        });
+
+        // Add loading state to buttons
+        document.querySelectorAll('.btn-add, .btn-cart-action, .btn-action').forEach(button => {
+            button.addEventListener('click', function (e) {
+                if (!this.classList.contains('disabled') && !this.classList.contains('btn-delete')) {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<span class="loading-spinner"></span> Loading...';
+                    this.disabled = true;
+
+                    // Re-enable after navigation (won't actually execute due to navigation)
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    }, 2000);
+                }
+            });
+        });
+
+        // Smooth scroll to top
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tooltip]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+</body>
+
+</html>
