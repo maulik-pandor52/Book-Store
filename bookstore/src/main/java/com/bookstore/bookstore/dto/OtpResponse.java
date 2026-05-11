@@ -1,0 +1,30 @@
+package com.bookstore.bookstore.dto;
+
+public class OtpResponse {
+    private boolean success;
+    private String message;
+    private String token;
+
+    public OtpResponse(boolean success, String message) {
+        this.success = success;
+        this.message = message;
+    }
+
+    public OtpResponse(boolean success, String message, String token) {
+        this.success = success;
+        this.message = message;
+        this.token = token;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getToken() {
+        return token;
+    }
+}
