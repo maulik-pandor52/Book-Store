@@ -1,0 +1,12 @@
+package com.bookstore.bookstore.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.bookstore.bookstore.model.Cart;
+
+import java.util.List;
+
+public interface CartRepository extends JpaRepository<Cart, Integer> {
+    List<Cart> findByUserId(int userId);
+    java.util.Optional<Cart> findByUserIdAndBookId(int userId, int bookId);
+    void deleteByUserId(int userId);
+}
